@@ -14,8 +14,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { RegisterBodyType, RegisterBody } from "@/app/schemaValidations/auth.schema";
 import envConfig from "@/config"
+import { useRouter } from 'next/navigation';
 
 const RegisterForm = () => {
+  const router = useRouter()
   // 1. Define your form.
   const form = useForm<RegisterBodyType>({
     resolver: zodResolver(RegisterBody),
@@ -29,9 +31,6 @@ const RegisterForm = () => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: RegisterBodyType) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.    
-    // console.log(values);
     const response = await fetch(`${envConfig.NEXT_PUBLIC_API_ENDPOINT}/auth/register`, {
       method: "POST",
       body: JSON.stringify(values),
@@ -39,13 +38,14 @@ const RegisterForm = () => {
         "Content-Type": "application/json",
       },
     }).then((res) => res.json());
-    console.log(response);
+    // console.log('check response => ', response);
     form.reset({
       name: "",
       email: "",
       password: "",
       confirmPassword: ""
     });
+    router.push('/login');
   }
   // console.log('check env variable', envConfig.NEXT_PUBLIC_API_ENDPOINT);
 
@@ -61,7 +61,7 @@ const RegisterForm = () => {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="Enter your user name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
